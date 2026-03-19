@@ -5,9 +5,15 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Routes
+const userRoutes = require("./routes/userRoutes");
+const adminRoutes = require("./routes/adminRoutes");
+
+app.use("/api/users", userRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Test Route
 app.get("/", (req, res) => {
