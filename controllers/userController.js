@@ -27,7 +27,7 @@ const registerUser = async (req, res) => {
 
   res.send({
     message: "User registered",
-    token: generateToken(user._id, user.role),
+    // token: generateToken(user._id, user.role),
   });
 };
 
