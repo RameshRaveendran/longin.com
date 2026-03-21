@@ -1,2 +1,19 @@
-<h1>Welcome <%= user.name %></h1>
-<p>Email: <%= user.email %></p>
+<h1>Admin Dashboard</h1>
+
+<p>Welcome <%= user.name %> (Admin)</p>
+
+<h2>All Users</h2>
+
+<ul>
+  <% users.forEach(u => { %>
+    <li>
+      <%= u.name %> - <%= u.email %>
+
+      <form action="/admin/delete/<%= u._id %>" method="POST">
+        <button type="submit">Delete</button>
+      </form>
+    </li>
+  <% }) %>
+</ul>
+
+<a href="/logout">Logout</a>

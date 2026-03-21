@@ -55,7 +55,27 @@ router.post("/login", async (req, res) => {
 router.get("/dashboard", protect, async (req, res) => {
   const user = await User.findById(req.user.id).select("-password");
 
+  // 🔥 ROLE CHECK
+  if (user.role === "admin") {
+    const users = await User.find().select("-password");
+
+    return res.render("dashboard/admin", { user, users });
+  }
+
   res.render("dashboard/user", { user });
+});
+// delete
+router.post("/admin/delete/:id", protect, async (req, res) => {
+  const user = await User.findById(req.user.id);
+
+  // only admin
+  if (user.role !== "admin") {
+    return res.send("Not authorized");
+  }
+
+  await User.findByIdAndDelete(req.params.id);
+
+  res.redirect("/dashboard");
 });
 
 // LOGOUT
