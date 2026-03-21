@@ -1,7 +1,7 @@
 
 const User = require("../models/User");
 
-exports.getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res) => {
   try {
     const users = await User.find().select("-password");
 
@@ -15,7 +15,7 @@ exports.getAllUsers = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-exports.updateUser = async (req, res) => {
+const updateUser = async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(
       req.params.id,
@@ -29,7 +29,7 @@ exports.updateUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-exports.deleteUser = async (req, res) => {
+const deleteUser = async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
 
