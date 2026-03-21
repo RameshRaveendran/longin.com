@@ -1,11 +1,169 @@
-<h1>Welcome to Auth System</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth System | Welcome</title>
+    <style>
+        :root {
+            --primary-neon: #00f2ff;
+            --secondary-neon: #7000ff;
+            --bg-color: #080808;
+        }
 
-<p>This is a simple authentication system.</p>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
 
-<a href="/login">
-  <button>Login</button>
-</a>
+        body {
+            background-color: var(--bg-color);
+            color: white;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
 
-<a href="/register">
-  <button>Register</button>
-</a>
+        /* The Animated Background Layer */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Glassmorphism Card */
+        .container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3rem 2rem;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            width: 90%;
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        p {
+            color: #aaa;
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+        }
+
+        /* Button Styling */
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+        }
+
+        .btn-login {
+            background: white;
+            color: black;
+        }
+
+        .btn-login:hover {
+            background: #e0e0e0;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-register {
+            background: transparent;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-register:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary-neon);
+            color: var(--primary-neon);
+        }
+
+        /* Interactive Cursor Follower */
+        .cursor-glow {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(0, 242, 255, 0.15) 0%, rgba(112, 0, 255, 0.05) 50%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 2;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Mouse Glow Effect -->
+    <div class="cursor-glow" id="cursor"></div>
+
+    <div class="container">
+        <h1>Auth System</h1>
+        <p>A secure, minimalist gateway to your personalized dashboard.</p>
+        
+        <div class="btn-group">
+            <a href="/login"><button class="btn-login">Login to Account</button></a>
+            <a href="/register"><button class="btn-register">Create New Account</button></a>
+        </div>
+    </div>
+
+    <script>
+        const cursor = document.getElementById('cursor');
+        
+        // Follow mouse movement
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        // Effect when clicking
+        document.addEventListener('mousedown', () => {
+            cursor.style.width = '600px';
+            cursor.style.height = '600px';
+        });
+
+        document.addEventListener('mouseup', () => {
+            cursor.style.width = '400px';
+            cursor.style.height = '400px';
+        });
+    </script>
+</body>
+</html>
