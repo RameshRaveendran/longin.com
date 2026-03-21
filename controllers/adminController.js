@@ -1,5 +1,17 @@
-const getAllUsers = (req, res) => {
-  res.send("All Users Data");
-};
 
-module.exports = { getAllUsers };
+const User = require("../models/User");
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("-password");
+
+    res.status(200).json({
+      success: true,
+      count: users.length,
+      data: users,
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
