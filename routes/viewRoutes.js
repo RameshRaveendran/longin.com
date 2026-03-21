@@ -11,7 +11,7 @@ router.get("/", (req, res) => {
     return res.redirect("/dashboard");
   }
 
-  res.render("auth/register");
+  res.render("index");
 });
 
 // SHOW PAGES
