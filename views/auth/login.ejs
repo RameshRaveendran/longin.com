@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auth System | Login</title>
+
+    <!-- ✅ SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         :root {
             --primary-neon: #00f2ff;
@@ -30,7 +35,7 @@
             position: relative;
         }
 
-        /* Mouse Glow Effect */
+        /* Mouse Glow */
         #cursor {
             position: fixed;
             width: 400px;
@@ -42,13 +47,11 @@
             transform: translate(-50%, -50%);
         }
 
-        /* Glass Login Card */
         .login-card {
             position: relative;
             z-index: 10;
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 2.5rem;
             border-radius: 24px;
@@ -72,7 +75,6 @@
             gap: 1.2rem;
         }
 
-        /* Professional Input Styling */
         input {
             background: var(--input-bg);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -81,7 +83,7 @@
             color: white;
             font-size: 1rem;
             outline: none;
-            transition: all 0.3s ease;
+            transition: 0.3s;
         }
 
         input:focus {
@@ -90,57 +92,39 @@
             box-shadow: 0 0 15px rgba(0, 242, 255, 0.1);
         }
 
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
-        }
-
         button {
-            margin-top: 0.5rem;
             padding: 14px;
             border-radius: 12px;
             border: none;
             background: white;
             color: black;
             font-weight: 700;
-            font-size: 1rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: 0.3s;
         }
 
         button:hover {
             transform: scale(1.02);
-            background: #f0f0f0;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
         }
 
-        /* Footer Links */
         .footer-links {
             margin-top: 1.5rem;
             text-align: center;
-            font-size: 0.9rem;
-        }
-
-        .footer-links a {
-            color: rgba(255, 255, 255, 0.6);
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .footer-links a:hover {
-            color: var(--primary-neon);
         }
     </style>
 </head>
+
 <body>
 
     <div id="cursor"></div>
 
     <div class="login-card">
         <h2>Welcome Back</h2>
-        
-        <form action="/login" method="POST">
-            <input type="email" name="email" placeholder="Email Address" required />
-            <input type="password" name="password" placeholder="Password" required />
+
+        <!-- ✅ UPDATED FORM -->
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Email Address"  />
+            <input type="password" id="password" placeholder="Password"  />
             <button type="submit">Sign In</button>
         </form>
 
@@ -150,11 +134,80 @@
     </div>
 
     <script>
+        // 🎨 Cursor effect
         const cursor = document.getElementById('cursor');
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
         });
+
+        // 🚀 LOGIN LOGIC WITH SWAL
+        const form = document.getElementById("loginForm");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            // 🟡 Validation
+            if (!email || !password) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Missing Fields",
+                    text: "Enter all fields"
+                });
+                return;
+            }
+
+            try {
+                // 🔄 Loading
+                Swal.fire({
+                    title: "Logging in...",
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading()
+                });
+
+                const res = await fetch("/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await res.json();
+
+                Swal.close();
+
+                if (data.success) {
+                    // ✅ Success
+                    Swal.fire({
+                        icon: "success",
+                        title: "Welcome!",
+                        text: data.message
+                    }).then(() => {
+                        window.location.href = "/dashboard";
+                    });
+                } else {
+                    // ❌ Error
+                    Swal.fire({
+                        icon: "error",
+                        title: "Login Failed",
+                        text: data.message
+                    });
+                }
+
+            } catch (err) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Server Error",
+                    text: "Something went wrong"
+                });
+            }
+        });
     </script>
+
 </body>
+
 </html>
