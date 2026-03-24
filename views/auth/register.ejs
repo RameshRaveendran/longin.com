@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -131,6 +132,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <div id="cursor"></div>
@@ -138,11 +140,11 @@
     <div class="register-card">
         <h2>Join Us</h2>
         <p class="subtitle">Create an account to get started.</p>
-        
+
         <form action="/register" method="POST">
-            <input type="text" name="name" placeholder="Full Name"  />
-            <input type="email" name="email" placeholder="Email Address"  />
-            <input type="password" name="password" placeholder="Create Password"  />
+            <input type="text" name="name" placeholder="Full Name" />
+            <input type="email" name="email" placeholder="Email Address" />
+            <input type="password" name="password" placeholder="Create Password" />
             <button type="submit">Create Account</button>
         </form>
 
@@ -157,6 +159,8 @@
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
         });
+
     </script>
 </body>
+
 </html>
