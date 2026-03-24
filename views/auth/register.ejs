@@ -5,6 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auth System | Register</title>
+
+    <!-- ✅ SWEETALERT CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         :root {
             --primary-neon: #00f2ff;
@@ -31,7 +35,6 @@
             position: relative;
         }
 
-        /* Mouse Glow Effect */
         #cursor {
             position: fixed;
             width: 400px;
@@ -43,13 +46,11 @@
             transform: translate(-50%, -50%);
         }
 
-        /* Glass Register Card */
         .register-card {
             position: relative;
             z-index: 10;
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 2.5rem;
             border-radius: 24px;
@@ -141,10 +142,11 @@
         <h2>Join Us</h2>
         <p class="subtitle">Create an account to get started.</p>
 
-        <form action="/register" method="POST">
-            <input type="text" name="name" placeholder="Full Name" />
-            <input type="email" name="email" placeholder="Email Address" />
-            <input type="password" name="password" placeholder="Create Password" />
+        <!-- ❌ REMOVE action + method -->
+        <form id="registerForm">
+            <input type="text" id="name" placeholder="Full Name" />
+            <input type="email" id="email" placeholder="Email Address" />
+            <input type="password" id="password" placeholder="Create Password" />
             <button type="submit">Create Account</button>
         </form>
 
@@ -158,6 +160,63 @@
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
+        });
+
+        // ✅ FORM SUBMIT HANDLER
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const res = await fetch('/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, password })
+                });
+
+                const data = await res.json();
+
+                // ❌ USER EXISTS
+                if (data.message === "User already exists" || data.message.includes("duplicate")) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'User already exists!'
+                    });
+                }
+
+                // ❌ VALIDATION ERROR
+                else if (data.message.includes("required")) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Missing Fields',
+                        text: 'Please fill all fields!'
+                    });
+                }
+
+                // ✅ SUCCESS
+                else {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Account created successfully!'
+                    }).then(() => {
+                        window.location.href = '/login';
+                    });
+                }
+
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Server Error',
+                    text: 'Something went wrong!'
+                });
+            }
         });
 
     </script>
