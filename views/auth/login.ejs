@@ -149,6 +149,7 @@
 
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
+            console.log(email , password)
 
             // 🟡 Validation
             if (!email || !password) {
@@ -202,8 +203,9 @@
                 Swal.fire({
                     icon: "error",
                     title: "Server Error",
-                    text: "Something went wrong"
+                    text: "Something went wrongdd"
                 });
+                console.log(err)
             }
         });
     </script>

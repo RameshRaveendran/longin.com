@@ -3,14 +3,14 @@ const router = express.Router();
 
 const User = require("../models/User");
 const { protect } = require("../middleware/authMiddleware");
-const  generateToken  = require("../utils/generateToken");
+const generateToken = require("../utils/generateToken");
 const { hashPassword, comparePassword } = require("../utils/hashPassword");
 
+// HOME
 router.get("/", (req, res) => {
   if (req.cookies.token) {
     return res.redirect("/dashboard");
   }
-
   res.render("index");
 });
 
@@ -19,76 +19,112 @@ router.get("/register", (req, res) => res.render("auth/register"));
 router.get("/login", (req, res) => res.render("auth/login"));
 
 // REGISTER
-router.post('/register', async (req, res) => {
+router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // Manual validation (BEST PRACTICE)
     if (!name || !email || !password) {
       return res.status(400).json({
+        success: false,
         message: "All fields are required"
       });
     }
-    // CHECK existingUser
+
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
       return res.status(400).json({
+        success: false,
         message: "User already exists"
       });
-      
     }
-    
-    const user = await User.create(req.body);
+
+    const hashedPassword = await hashPassword(password);
+
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword
+    });
 
     res.status(201).json({
-      message: "User created successfully",
-      user
+      success: true,
+      message: "User created successfully"
     });
 
   } catch (error) {
-    res.status(400).json({
+    res.status(500).json({
+      success: false,
       message: error.message
     });
   }
 });
 
-// LOGIN
+// LOGIN ✅ FIXED
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const user = await User.findOne({ email });
+    // validation
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required"
+      });
+    }
 
-  if (!user || !(await comparePassword(password, user.password))) {
-    return res.send("Invalid credentials");
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid credentials"
+      });
+    }
+
+    const isMatch = await comparePassword(password, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid credentials"
+      });
+    }
+
+    const token = generateToken(user._id);
+
+    res.cookie("token", token);
+
+    // ✅ SEND JSON (NOT REDIRECT)
+    res.json({
+      success: true,
+      message: "Login successful"
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
   }
-
-  const token = generateToken(user._id);
-
-  // store token in cookie
-  res.cookie("token", token);
-
-  res.redirect("/dashboard");
 });
 
 // DASHBOARD
 router.get("/dashboard", protect, async (req, res) => {
   const user = await User.findById(req.user.id).select("-password");
 
-  // 🔥 ROLE CHECK
   if (user.role === "admin") {
     const users = await User.find().select("-password");
-
     return res.render("dashboard/admin", { user, users });
   }
 
   res.render("dashboard/user", { user });
 });
-// delete
+
+// DELETE
 router.post("/admin/delete/:id", protect, async (req, res) => {
   const user = await User.findById(req.user.id);
 
-  // only admin
   if (user.role !== "admin") {
     return res.send("Not authorized");
   }
