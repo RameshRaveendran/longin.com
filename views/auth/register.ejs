@@ -154,60 +154,97 @@
     </div>
 
     <script>
-        const cursor = document.getElementById('cursor');
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-        });
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', (e) => {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+    });
 
-        // ✅ SWEET ALERT IMPLEMENTATION
-        const form = document.getElementById('registerForm');
+    const form = document.getElementById('registerForm');
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault(); // stop reload
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
 
-            try {
-                const res = await fetch('/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
+        const { name, email, password } = data;
 
-                const result = await res.json();
+        // 🔥 1. EMPTY VALIDATION
+        if (!name || !email || !password) {
+            return Swal.fire({
+                icon: 'warning',
+                title: 'Missing Fields',
+                text: 'All fields are required!'
+            });
+        }
 
-                if (res.ok) {
-                    await Swal.fire({
-                        icon: 'success',
-                        title: 'Account Created!',
-                        text: result.message || 'Registration successful',
-                        confirmButtonColor: '#00f2ff'
-                    });
+        // 🔥 2. EMAIL VALIDATION
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return Swal.fire({
+                icon: 'warning',
+                title: 'Invalid Email',
+                text: 'Please enter a valid email address'
+            });
+        }
 
-                    // 👉 redirect after success
-                    window.location.href = '/login';
+        // 🔥 3. PASSWORD VALIDATION
+        if (password.length < 6) {
+            return Swal.fire({
+                icon: 'warning',
+                title: 'Weak Password',
+                text: 'Password must be at least 6 characters'
+            });
+        }
 
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Registration Failed',
-                        text: result.message || 'Something went wrong',
-                    });
-                }
-
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Server Error',
-                    text: 'Please try again later'
-                });
+        // 🔥 4. LOADING STATE
+        Swal.fire({
+            title: 'Creating account...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
             }
         });
-    </script>
+
+        try {
+            const res = await fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await res.json();
+
+            if (res.ok) {
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Account Created!',
+                    text: result.message || 'Registration successful',
+                    confirmButtonColor: '#00f2ff'
+                });
+
+                window.location.href = '/login';
+
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Registration Failed',
+                    text: result.message || 'Something went wrong'
+                });
+            }
+
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Server Error',
+                text: 'Please try again later'
+            });
+        }
+    });
+</script>
 
 </body>
 </html>
