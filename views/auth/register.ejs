@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auth System | Register</title>
-
-    <!-- ✅ SweetAlert2 CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <style>
         :root {
             --primary-neon: #00f2ff;
@@ -34,6 +30,7 @@
             position: relative;
         }
 
+        /* Mouse Glow Effect */
         #cursor {
             position: fixed;
             width: 400px;
@@ -45,11 +42,13 @@
             transform: translate(-50%, -50%);
         }
 
+        /* Glass Register Card */
         .register-card {
             position: relative;
             z-index: 10;
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 2.5rem;
             border-radius: 24px;
@@ -140,11 +139,10 @@
         <h2>Join Us</h2>
         <p class="subtitle">Create an account to get started.</p>
         
-        <!-- ❌ Removed default submit -->
-        <form id="registerForm">
-            <input type="text" name="name" placeholder="Full Name"  />
-            <input type="email" name="email" placeholder="Email Address"  />
-            <input type="password" name="password" placeholder="Create Password"  />
+        <form action="/register" method="POST">
+            <input type="text" name="name" placeholder="Full Name" required />
+            <input type="email" name="email" placeholder="Email Address" required />
+            <input type="password" name="password" placeholder="Create Password" required />
             <button type="submit">Create Account</button>
         </form>
 
@@ -154,97 +152,11 @@
     </div>
 
     <script>
-    const cursor = document.getElementById('cursor');
-    document.addEventListener('mousemove', (e) => {
-        cursor.style.left = e.clientX + 'px';
-        cursor.style.top = e.clientY + 'px';
-    });
-
-    const form = document.getElementById('registerForm');
-
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData.entries());
-
-        const { name, email, password } = data;
-
-        // 🔥 1. EMPTY VALIDATION
-        if (!name || !email || !password) {
-            return Swal.fire({
-                icon: 'warning',
-                title: 'Missing Fields',
-                text: 'All fields are required!'
-            });
-        }
-
-        // 🔥 2. EMAIL VALIDATION
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            return Swal.fire({
-                icon: 'warning',
-                title: 'Invalid Email',
-                text: 'Please enter a valid email address'
-            });
-        }
-
-        // 🔥 3. PASSWORD VALIDATION
-        if (password.length < 6) {
-            return Swal.fire({
-                icon: 'warning',
-                title: 'Weak Password',
-                text: 'Password must be at least 6 characters'
-            });
-        }
-
-        // 🔥 4. LOADING STATE
-        Swal.fire({
-            title: 'Creating account...',
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
         });
-
-        try {
-            const res = await fetch('/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-
-            const result = await res.json();
-
-            if (res.ok) {
-                await Swal.fire({
-                    icon: 'success',
-                    title: 'Account Created!',
-                    text: result.message || 'Registration successful',
-                    confirmButtonColor: '#00f2ff'
-                });
-
-                window.location.href = '/login';
-
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Registration Failed',
-                    text: result.message || 'Something went wrong'
-                });
-            }
-
-        } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Server Error',
-                text: 'Please try again later'
-            });
-        }
-    });
-</script>
-
+    </script>
 </body>
 </html>
