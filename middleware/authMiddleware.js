@@ -1,11 +1,10 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
-// 1) PROTECT ROUTES (verify token)
+// PROTECT ROUTES
 const protect = async (req, res, next) => {
   let token;
 
-  // check cookie
   if (req.cookies.token) {
     token = req.cookies.token;
   }
@@ -17,7 +16,10 @@ const protect = async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    req.user = { id: decoded.id };
+    // ✅ FIX: GET FULL USER (IMPORTANT)
+    const user = await User.findById(decoded.id).select("-password");
+
+    req.user = user;
 
     next();
   } catch (err) {
@@ -25,32 +27,7 @@ const protect = async (req, res, next) => {
   }
 };
 
-
-// protect = async (req, res, next) => {
-//   let token;
-
-//   // token from header: Authorization: Bearer <token>
-//   if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
-//     try {
-//       token = req.headers.authorization.split(" ")[1];
-
-//       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-//       // attach user to request (without password)
-//       req.user = await User.findById(decoded.id).select("-password");
-
-//       next();
-//     } catch (error) {
-//       return res.status(401).send("Not authorized, token failed");
-//     }
-//   }
-
-//   if (!token) {
-//     return res.status(401).send("Not authorized, no token");
-//   }
-// };
-
-// 2) ROLE CHECK (admin/user)
+// ROLE CHECK
 const authorize = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
@@ -59,7 +36,5 @@ const authorize = (...roles) => {
     next();
   };
 };
-
-
 
 module.exports = { protect, authorize };
