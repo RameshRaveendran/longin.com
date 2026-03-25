@@ -1,4 +1,3 @@
-
 const User = require("../models/User");
 
 const getAllUsers = async (req, res) => {
@@ -15,12 +14,13 @@ const getAllUsers = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 const updateUser = async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true }
+      { new: true, runValidators: true }
     );
 
     res.json(user);
@@ -29,6 +29,7 @@ const updateUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 const deleteUser = async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
@@ -40,4 +41,4 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = {getAllUsers , updateUser, deleteUser};
+module.exports = { getAllUsers, updateUser, deleteUser };
