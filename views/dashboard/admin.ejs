@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Protocol | <%= user.name %></title>
+
     <style>
         :root {
             --primary: #00f2ff;
@@ -26,7 +27,6 @@
             overflow-x: hidden;
         }
 
-        /* Interactive Background */
         #particles { position: fixed; top: 0; left: 0; z-index: 0; opacity: 0.3; pointer-events: none; }
         #cursor-blur {
             position: fixed; width: 500px; height: 500px;
@@ -34,7 +34,6 @@
             border-radius: 50%; pointer-events: none; z-index: 1; transform: translate(-50%, -50%);
         }
 
-        /* Stats Row */
         .stats-container {
             position: relative; z-index: 10;
             display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -48,10 +47,9 @@
             backdrop-filter: blur(10px);
         }
 
-        .stat-label { color: #666; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-label { color: #666; font-size: 0.75rem; text-transform: uppercase; }
         .stat-value { font-size: 1.8rem; font-weight: 800; color: var(--primary); margin-top: 5px; }
 
-        /* Search & Action Bar */
         .action-bar {
             position: relative; z-index: 10;
             width: 100%; max-width: 900px;
@@ -67,12 +65,8 @@
             border-radius: 15px;
             color: white;
             outline: none;
-            transition: 0.3s;
         }
 
-        #userSearch:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(0, 242, 255, 0.1); }
-
-        /* Management Card */
         .management-card {
             position: relative; z-index: 10;
             background: var(--glass);
@@ -81,128 +75,132 @@
             border-radius: 24px;
             width: 100%; max-width: 900px;
             padding: 1rem;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
         }
 
-        .user-table { width: 100%; border-collapse: collapse; text-align: left; }
+        .user-table { width: 100%; border-collapse: collapse; }
         .user-table th { padding: 15px; color: #555; font-size: 0.75rem; text-transform: uppercase; }
         .user-table td { padding: 18px 15px; border-bottom: 1px solid rgba(255,255,255,0.03); }
-        
-        .user-row { transition: 0.2s; }
-        .user-row:hover { background: rgba(255,255,255,0.02); }
 
         .btn-delete {
             background: rgba(255, 62, 62, 0.1);
             color: var(--admin-red);
             border: 1px solid rgba(255, 62, 62, 0.2);
             padding: 8px 14px; border-radius: 8px;
-            font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: 0.3s;
+            cursor: pointer;
         }
 
-        .btn-delete:hover { background: var(--admin-red); color: white; }
+        .btn-edit {
+            background: rgba(0,242,255,0.1);
+            color: #00f2ff;
+            border: 1px solid #00f2ff;
+            padding: 8px 14px;
+            border-radius: 8px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
 
         .logout-link {
-            position: relative; z-index: 20; margin-top: 2rem;
-            color: #555; text-decoration: none; font-size: 0.9rem; transition: 0.3s;
+            margin-top: 2rem;
+            color: #555;
+            text-decoration: none;
         }
-        .logout-link:hover { color: var(--admin-red); }
-
     </style>
 </head>
+
 <body>
 
-    <canvas id="particles"></canvas>
-    <div id="cursor-blur"></div>
+<canvas id="particles"></canvas>
+<div id="cursor-blur"></div>
 
-    <div class="stats-container">
-        <div class="stat-card">
-            <div class="stat-label">Total Operatives</div>
-            <div class="stat-value"><%= users.length %></div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">System Status</div>
-            <div class="stat-value" style="color: #00ff88;">Nominal</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Admin Identity</div>
-            <div class="stat-value" style="font-size: 1.2rem; margin-top: 12px;"><%= user.name %></div>
-        </div>
+<div class="stats-container">
+    <div class="stat-card">
+        <div class="stat-label">Total Users</div>
+        <div class="stat-value"><%= users.length %></div>
     </div>
 
-    <div class="action-bar">
-        <input type="text" id="userSearch" placeholder="Filter by name or email address..." onkeyup="filterUsers()">
+    <div class="stat-card">
+        <div class="stat-label">Admin</div>
+        <div class="stat-value"><%= user.name %></div>
     </div>
+</div>
 
-    <main class="management-card">
-        <table class="user-table" id="adminTable">
-            <thead>
-                <tr>
-                    <th>Identity</th>
-                    <th>Email Address</th>
-                    <th style="text-align: right;">Authorization</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% users.forEach(u => { %>
-                <tr class="user-row">
-                    <td class="search-name"><strong><%= u.name %></strong></td>
-                    <td class="search-email" style="color: #888;"><%= u.email %></td>
-                    <td style="text-align: right;">
-                        <form action="/admin/delete/<%= u._id %>" method="POST">
-                            <button type="submit" class="btn-delete" onclick="return confirm('Erase this user data?')">Revoke</button>
-                        </form>
-                    </td>
-                </tr>
-                <% }) %>
-            </tbody>
-        </table>
-    </main>
+<div class="action-bar">
+    <input type="text" id="userSearch" placeholder="Search..." onkeyup="filterUsers()">
+</div>
 
-    <a href="/logout" class="logout-link">Terminate Admin Session</a>
+<main class="management-card">
+    <table class="user-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th style="text-align:right;">Actions</th>
+            </tr>
+        </thead>
 
-    <script>
-        // 1. Live Filter Search
-        function filterUsers() {
-            let input = document.getElementById('userSearch').value.toLowerCase();
-            let rows = document.querySelectorAll('.user-row');
-            
-            rows.forEach(row => {
-                let name = row.querySelector('.search-name').innerText.toLowerCase();
-                let email = row.querySelector('.search-email').innerText.toLowerCase();
-                if(name.includes(input) || email.includes(input)) {
-                    row.style.display = "";
-                } else {
-                    row.style.display = "none";
-                }
-            });
-        }
+        <tbody>
+            <% users.forEach(u => { %>
+            <tr class="user-row">
+                <td class="search-name"><%= u.name %></td>
+                <td class="search-email"><%= u.email %></td>
 
-        // 2. Background Visuals
-        const blur = document.getElementById('cursor-blur');
-        document.addEventListener('mousemove', (e) => {
-            blur.style.left = e.clientX + 'px';
-            blur.style.top = e.clientY + 'px';
-        });
+                <td style="text-align:right;">
+                    <button class="btn-delete" onclick="deleteUser('<%= u._id %>')">
+                        Delete
+                    </button>
 
-        const canvas = document.getElementById('particles');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-        function init() {
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            for(let i=0; i<40; i++) {
-                particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*1, speed: Math.random()*0.2 + 0.1 });
-            }
-        }
-        function animate() {
-            ctx.clearRect(0,0,canvas.width, canvas.height);
-            ctx.fillStyle = "rgba(255,255,255,0.2)";
-            particles.forEach(p => {
-                p.y -= p.speed; if(p.y < 0) p.y = canvas.height;
-                ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
-            });
-            requestAnimationFrame(animate);
-        }
-        init(); animate();
-    </script>
+                    <button class="btn-edit" onclick="editUser('<%= u._id %>', '<%= u.name %>', '<%= u.email %>')">
+                        Edit
+                    </button>
+                </td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</main>
+
+<a href="/logout" class="logout-link">Logout</a>
+
+<script>
+function filterUsers() {
+    let input = document.getElementById('userSearch').value.toLowerCase();
+    let rows = document.querySelectorAll('.user-row');
+
+    rows.forEach(row => {
+        let name = row.querySelector('.search-name').innerText.toLowerCase();
+        let email = row.querySelector('.search-email').innerText.toLowerCase();
+
+        row.style.display = (name.includes(input) || email.includes(input)) ? "" : "none";
+    });
+}
+
+async function deleteUser(id) {
+    if (!confirm("Delete this user?")) return;
+
+    await fetch(`/users/${id}`, {
+        method: "DELETE"
+    });
+
+    location.reload();
+}
+
+async function editUser(id, name, email) {
+    const newName = prompt("Enter name", name);
+    const newEmail = prompt("Enter email", email);
+
+    if (!newName || !newEmail) return;
+
+    await fetch(`/users/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ name: newName, email: newEmail })
+    });
+
+    location.reload();
+}
+</script>
+
 </body>
 </html>
