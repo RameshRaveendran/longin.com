@@ -162,23 +162,12 @@
 <a href="/logout" class="logout-link">Logout</a>
 
 <script>
-function filterUsers() {
-    let input = document.getElementById('userSearch').value.toLowerCase();
-    let rows = document.querySelectorAll('.user-row');
-
-    rows.forEach(row => {
-        let name = row.querySelector('.search-name').innerText.toLowerCase();
-        let email = row.querySelector('.search-email').innerText.toLowerCase();
-
-        row.style.display = (name.includes(input) || email.includes(input)) ? "" : "none";
-    });
-}
-
 async function deleteUser(id) {
     if (!confirm("Delete this user?")) return;
 
-    await fetch(`/users/${id}`, {
-        method: "DELETE"
+    await fetch(`/api/admin/users/${id}`, {
+        method: "DELETE",
+        credentials: "same-origin"
     });
 
     location.reload();
@@ -190,17 +179,17 @@ async function editUser(id, name, email) {
 
     if (!newName || !newEmail) return;
 
-    await fetch(`/users/${id}`, {
+    await fetch(`/api/admin/users/${id}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
         },
+        credentials: "same-origin",
         body: JSON.stringify({ name: newName, email: newEmail })
     });
 
     location.reload();
 }
 </script>
-
 </body>
 </html>
