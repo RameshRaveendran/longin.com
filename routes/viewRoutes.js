@@ -6,7 +6,10 @@ const { protect } = require("../middleware/authMiddleware");
 const generateToken = require("../utils/generateToken");
 const { hashPassword, comparePassword } = require("../utils/hashPassword");
 
+
+// =======================
 // HOME
+// =======================
 router.get("/", (req, res) => {
   if (req.cookies.token) {
     return res.redirect("/dashboard");
@@ -14,15 +17,22 @@ router.get("/", (req, res) => {
   res.render("index");
 });
 
+
+// =======================
 // SHOW PAGES
+// =======================
 router.get("/register", (req, res) => res.render("auth/register"));
 router.get("/login", (req, res) => res.render("auth/login"));
 
+
+// =======================
 // REGISTER
+// =======================
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
+    // validation
     if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
@@ -30,8 +40,8 @@ router.post("/register", async (req, res) => {
       });
     }
 
+    // check existing user
     const existingUser = await User.findOne({ email });
-
     if (existingUser) {
       return res.status(400).json({
         success: false,
@@ -39,9 +49,11 @@ router.post("/register", async (req, res) => {
       });
     }
 
+    // hash password
     const hashedPassword = await hashPassword(password);
 
-    const user = await User.create({
+    // create user
+    await User.create({
       name,
       email,
       password: hashedPassword
@@ -60,7 +72,10 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// LOGIN ✅ FIXED
+
+// =======================
+// LOGIN
+// =======================
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -73,8 +88,8 @@ router.post("/login", async (req, res) => {
       });
     }
 
+    // find user
     const user = await User.findOne({ email });
-
     if (!user) {
       return res.status(400).json({
         success: false,
@@ -82,8 +97,8 @@ router.post("/login", async (req, res) => {
       });
     }
 
+    // compare password
     const isMatch = await comparePassword(password, user.password);
-
     if (!isMatch) {
       return res.status(400).json({
         success: false,
@@ -91,11 +106,14 @@ router.post("/login", async (req, res) => {
       });
     }
 
+    // generate token
     const token = generateToken(user._id);
 
-    res.cookie("token", token);
+    // store in cookie
+    res.cookie("token", token, {
+      httpOnly: true
+    });
 
-    // ✅ SEND JSON (NOT REDIRECT)
     res.json({
       success: true,
       message: "Login successful"
@@ -109,35 +127,40 @@ router.post("/login", async (req, res) => {
   }
 });
 
+
+// =======================
 // DASHBOARD
+// =======================
 router.get("/dashboard", protect, async (req, res) => {
-  const user = await User.findById(req.user.id).select("-password");
+  try {
+    const user = await User.findById(req.user.id).select("-password");
 
-  if (user.role === "admin") {
-    const users = await User.find().select("-password");
-    return res.render("dashboard/admin", { user, users });
+    if (!user) {
+      return res.redirect("/login");
+    }
+
+    // admin dashboard
+    if (user.role === "admin") {
+      const users = await User.find().select("-password");
+      return res.render("dashboard/admin", { user, users });
+    }
+
+    // normal user dashboard
+    res.render("dashboard/user", { user });
+
+  } catch (err) {
+    res.redirect("/login");
   }
-
-  res.render("dashboard/user", { user });
 });
 
-// DELETE
-router.post("/admin/delete/:id", protect, async (req, res) => {
-  const user = await User.findById(req.user.id);
 
-  if (user.role !== "admin") {
-    return res.send("Not authorized");
-  }
-
-  await User.findByIdAndDelete(req.params.id);
-
-  res.redirect("/dashboard");
-});
-
+// =======================
 // LOGOUT
+// =======================
 router.get("/logout", (req, res) => {
   res.clearCookie("token");
   res.redirect("/login");
 });
+
 
 module.exports = router;
