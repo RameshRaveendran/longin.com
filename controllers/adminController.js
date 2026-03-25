@@ -1,5 +1,6 @@
 const User = require("../models/User");
 
+// get all user
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.find().select("-password");
@@ -15,6 +16,7 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+// update user
 const updateUser = async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(
@@ -30,6 +32,7 @@ const updateUser = async (req, res) => {
   }
 };
 
+// delete user
 const deleteUser = async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
