@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
+const noCache = require("../middleware/noCache");
 const { protect } = require("../middleware/authMiddleware");
 const {
   registerUser,
@@ -9,7 +10,7 @@ const {
 } = require("../controllers/userController");
 
 // example protected route
-router.get("/profile", protect, (req, res) => {
+router.get("/profile", protect, noCache, (req, res) => {
   res.send(req.user);
 });
 router.post("/register", registerUser);

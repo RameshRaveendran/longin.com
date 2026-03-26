@@ -5,6 +5,7 @@ const User = require("../models/User");
 const { protect } = require("../middleware/authMiddleware");
 const generateToken = require("../utils/generateToken");
 const { hashPassword, comparePassword } = require("../utils/hashPassword");
+const noCache = require("../middleware/noCache");
 
 
 // =======================
@@ -131,7 +132,7 @@ router.post("/login", async (req, res) => {
 // =======================
 // DASHBOARD
 // =======================
-router.get("/dashboard", protect, async (req, res) => {
+router.get("/dashboard", protect, noCache, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
 
