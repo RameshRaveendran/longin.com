@@ -1,6 +1,12 @@
+// ============================
+// 1. Model Import
+// ============================
 const User = require("../models/User");
 
-// get all user
+
+// ============================
+// 2. Get All Users
+// ============================
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.find().select("-password");
@@ -16,13 +22,16 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-// update user
+
+// ============================
+// 3. Update User
+// ============================
 const updateUser = async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
+      req.params.id,              // user id from URL
+      req.body,                   // updated data
+      { new: true, runValidators: true } // return updated + validate
     );
 
     res.json(user);
@@ -32,7 +41,10 @@ const updateUser = async (req, res) => {
   }
 };
 
-// delete user
+
+// ============================
+// 4. Delete User
+// ============================
 const deleteUser = async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
@@ -44,4 +56,8 @@ const deleteUser = async (req, res) => {
   }
 };
 
+
+// ============================
+// 5. Export Controller Functions
+// ============================
 module.exports = { getAllUsers, updateUser, deleteUser };
