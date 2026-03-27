@@ -1,11 +1,18 @@
+// ============================
+// 1. Imports (Model + Utils)
+// ============================
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
+
 const {
   hashPassword,
   comparePassword,
 } = require("../utils/hashPassword");
 
-// REGISTER
+
+// ============================
+// 2. Register User
+// ============================
 const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -31,7 +38,10 @@ const registerUser = async (req, res) => {
   });
 };
 
-// LOGIN
+
+// ============================
+// 3. Login User
+// ============================
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -53,6 +63,10 @@ const loginUser = async (req, res) => {
   });
 };
 
+
+// ============================
+// 4. Get User Profile
+// ============================
 const getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
@@ -67,4 +81,8 @@ const getProfile = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser ,getProfile };
+
+// ============================
+// 5. Export Controller Functions
+// ============================
+module.exports = { registerUser, loginUser, getProfile };
