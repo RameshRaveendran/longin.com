@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Modern Dashboard</title>
+<title>Clean Dashboard</title>
 <style>
-:root {
+:root{
   --primary:#00f2ff;
   --accent:#7000ff;
   --bg:#050505;
@@ -17,44 +17,11 @@
 body{
   background:var(--bg);
   color:white;
-  display:flex;
 }
 
-/* SIDEBAR */
-.sidebar{
-  width:260px;
-  height:100vh;
-  background:rgba(255,255,255,0.03);
-  backdrop-filter:blur(20px);
-  border-right:1px solid rgba(255,255,255,0.08);
-  padding:2rem 1rem;
-}
-
-.logo{
-  font-size:1.5rem;
-  font-weight:800;
-  margin-bottom:2rem;
-  color:var(--primary);
-}
-
-.nav a{
-  display:block;
-  padding:12px;
-  margin:8px 0;
-  border-radius:10px;
-  color:#aaa;
-  text-decoration:none;
-  transition:0.3s;
-}
-
-.nav a:hover{
-  background:rgba(255,255,255,0.08);
-  color:white;
-}
-
-/* MAIN */
 .main{
-  flex:1;
+  max-width:900px;
+  margin:0 auto;
   padding:2rem;
 }
 
@@ -66,93 +33,69 @@ body{
   margin-bottom:2rem;
 }
 
+.avatar{
+  width:60px;
+  height:60px;
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  border-radius:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  font-size:1.3rem;
+}
+
 .user-box{
   display:flex;
   align-items:center;
   gap:1rem;
 }
 
-.avatar{
-  width:50px;
-  height:50px;
-  background:linear-gradient(135deg,var(--primary),var(--accent));
-  border-radius:15px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:800;
-}
-
-/* CARDS */
-.cards{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:1.5rem;
-}
-
-.card{
+/* SESSION CARD */
+.session{
   background:var(--glass);
-  padding:1.5rem;
+  padding:2rem;
   border-radius:20px;
   border:1px solid rgba(255,255,255,0.08);
 }
 
-.card h3{color:#aaa;margin-bottom:10px}
-
-.big{
-  font-size:1.8rem;
-  font-weight:700;
-}
-
-/* SESSION PANEL */
-.session{
-  margin-top:2rem;
-  background:var(--glass);
-  padding:2rem;
-  border-radius:20px;
+.session h2{
+  margin-bottom:1rem;
 }
 
 .row{
   display:flex;
   justify-content:space-between;
-  margin:10px 0;
+  padding:12px 0;
   border-bottom:1px solid rgba(255,255,255,0.05);
-  padding-bottom:8px;
 }
+
+.row:last-child{border:none}
 
 .logout{
   margin-top:1.5rem;
   display:inline-block;
-  padding:12px 20px;
+  padding:14px 20px;
   background:white;
   color:black;
-  border-radius:10px;
+  border-radius:12px;
   text-decoration:none;
   font-weight:700;
+  transition:0.3s;
 }
 
-.logout:hover{opacity:0.8}
+.logout:hover{
+  opacity:0.85;
+}
 </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-  <div class="logo">AuthOS</div>
-  <div class="nav">
-    <a href="#">Dashboard</a>
-    <a href="#">Profile</a>
-    <a href="#">Settings</a>
-    <a href="#">Security</a>
-  </div>
-</div>
-
-<!-- MAIN -->
 <div class="main">
 
   <!-- HEADER -->
   <div class="header">
-    <h1>Dashboard</h1>
+    <h1>Welcome</h1>
 
     <div class="user-box">
       <div class="avatar"><%= user.name.charAt(0) %></div>
@@ -163,27 +106,9 @@ body{
     </div>
   </div>
 
-  <!-- STATS -->
-  <div class="cards">
-    <div class="card">
-      <h3>Login Sessions</h3>
-      <div class="big">5 Active</div>
-    </div>
-
-    <div class="card">
-      <h3>Security Score</h3>
-      <div class="big">92%</div>
-    </div>
-
-    <div class="card">
-      <h3>Account Type</h3>
-      <div class="big"><%= user.role %></div>
-    </div>
-  </div>
-
   <!-- SESSION DETAILS -->
   <div class="session">
-    <h2>Session Details</h2>
+    <h2>Account Details</h2>
 
     <div class="row">
       <span>Name</span>
@@ -197,7 +122,7 @@ body{
 
     <div class="row">
       <span>Role</span>
-      <span><%= user.role %></span>
+      <span style="color:var(--primary)"><%= user.role %></span>
     </div>
 
     <div class="row">
