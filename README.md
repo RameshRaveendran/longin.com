@@ -166,7 +166,9 @@ public/        → Static files
 
 ---
 
-## 👨‍💻 Author
+## 👨‍💻 Author 
+
+Ramesh Raveendran M
 
 Built as a learning project to deeply understand backend systems, authentication flow, and full-stack architecture.
 
